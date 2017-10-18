@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Loads the cache from potentially multiple sources by calling each of the DAOs in turn to provide a pattern.
@@ -163,11 +163,4 @@ public class DefaultPatternCacheLoader extends CacheLoader<PatternCacheKey, Stri
         return option;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void optionValueChanged(Object event) {
-        // do nothing, Option called as needed
-    }
 }

@@ -42,7 +42,7 @@ import java.nio.charset.CodingErrorAction;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A {@link PatternDao} implementation used with {@link EnumResourceBundle} instances held within code.  Writing back to source code is clearly not an option,
@@ -50,7 +50,7 @@ import static com.google.common.base.Preconditions.*;
  * <p>
  * Created by David Sowerby on 27/07/15.
  */
-public class DefaultClassPatternDao implements ClassPatternDao, OptionContext<Object> {
+public class DefaultClassPatternDao implements ClassPatternDao, OptionContext {
     public static final String CONNECTION_URL = "Class based";
     public static final OptionKey<String> optionPathToValues = new OptionKey<>("", DefaultClassPatternDao.class, PatternLabelKey.Path, PatternDescriptionKey.Path);
     public static final OptionKey<Boolean> optionKeyUseKeyPath = new OptionKey<>(Boolean.TRUE, DefaultClassPatternDao.class, PatternLabelKey.Use_Key_Path,
@@ -225,10 +225,6 @@ public class DefaultClassPatternDao implements ClassPatternDao, OptionContext<Ob
         throw new UnsupportedOperationException("count is not available for class based patterns");
     }
 
-    @Override
-    public void optionValueChanged(Object event) {
-        //does nothing, option values are called as required
-    }
 
     /**
      * Returns the {@link Option} instance being used by this context

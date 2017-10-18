@@ -250,14 +250,6 @@ class DefaultPatternSourceProviderTest extends Specification {
         provider.optionInstance() == option
     }
 
-    def "optionValueChanged does nothing but need to complete coverage"() {
-        given:
-        provider = new DefaultPatternSourceProvider(sources, targets, option, sourceOrderByBundle, sourceOrderDefault)
-
-        expect:
-        provider.optionValueChanged(null)
-    }
-
     def "no targets set by option, use those set by Guice"() {
         given:
         targets.put(ClassPatternSource, classPatternDaoProvider)

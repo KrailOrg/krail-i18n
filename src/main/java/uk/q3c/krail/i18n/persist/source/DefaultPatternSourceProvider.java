@@ -19,23 +19,34 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import uk.q3c.krail.i18n.I18NKey;
 import uk.q3c.krail.i18n.bind.I18NModule;
-import uk.q3c.krail.i18n.persist.*;
+import uk.q3c.krail.i18n.persist.PatternDao;
+import uk.q3c.krail.i18n.persist.PatternSourceOrderByBundle;
+import uk.q3c.krail.i18n.persist.PatternSourceOrderDefault;
+import uk.q3c.krail.i18n.persist.PatternSourceProvider;
+import uk.q3c.krail.i18n.persist.PatternSources;
+import uk.q3c.krail.i18n.persist.PatternTargets;
 import uk.q3c.krail.option.Option;
 import uk.q3c.krail.option.OptionContext;
 import uk.q3c.krail.option.OptionKey;
 import uk.q3c.util.data.collection.AnnotationList;
 
 import java.lang.annotation.Annotation;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Default implementation for {@link PatternSourceProvider}
  * <p>
  * Created by David Sowerby on 01/08/15.
  */
-public class DefaultPatternSourceProvider implements PatternSourceProvider, OptionContext<Object> {
+public class DefaultPatternSourceProvider implements PatternSourceProvider, OptionContext {
     public static final OptionKey<AnnotationList> optionKeySourceOrder = new OptionKey<>(new AnnotationList(), DefaultPatternSourceProvider.class, I18NPersistLabelKey.Source_Order, I18NPersistDescriptionKey.Source_Order);
     public static final OptionKey<AnnotationList> optionKeySourceOrderDefault = new OptionKey<>(new AnnotationList(), DefaultPatternSourceProvider.class, I18NPersistLabelKey.Source_Order_Default, I18NPersistDescriptionKey.Source_Order_Default);
     public static final OptionKey<AnnotationList> optionKeySelectedTargets = new OptionKey<>(new AnnotationList(), DefaultPatternSourceProvider.class, I18NPersistLabelKey.Selected_Pattern_Targets, I18NPersistDescriptionKey.Selected_Pattern_Targets);
@@ -82,13 +93,6 @@ public class DefaultPatternSourceProvider implements PatternSourceProvider, Opti
         return option;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void optionValueChanged(Object event) {
-        //do nothing options used as required
-    }
 
     /**
      * Returns the order in which sources are processed.  The first non-null of the following is used:
