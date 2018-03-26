@@ -23,14 +23,16 @@ import uk.q3c.krail.i18n.cache.DefaultPatternCacheLoader;
 import uk.q3c.krail.i18n.persist.PatternCacheKey;
 import uk.q3c.krail.i18n.persist.PatternCacheLoader;
 import uk.q3c.krail.i18n.persist.PatternSource;
+import uk.q3c.util.guice.SerializationSupport;
 
+import java.io.ObjectInputStream;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static com.google.common.base.Preconditions.*;
-import static com.google.common.cache.CacheBuilder.*;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.cache.CacheBuilder.newBuilder;
 
 /**
  * A cached, single access point for I18N patterns, which may ultimately come from multiple sources.  The patterns are actually loaded into the cache by a
@@ -43,11 +45,19 @@ import static com.google.common.cache.CacheBuilder.*;
 
 public class DefaultPatternSource implements PatternSource<LoadingCache<PatternCacheKey, String>> {
 
-    private LoadingCache<PatternCacheKey, String> cache;
+    private transient PatternCacheLoader cacheLoader;
+    private transient LoadingCache<PatternCacheKey, String> cache;
+    private SerializationSupport serializationSupport;
 
 
     @Inject
-    protected DefaultPatternSource(PatternCacheLoader cacheLoader) {
+    protected DefaultPatternSource(PatternCacheLoader cacheLoader, SerializationSupport serializationSupport) {
+        this.cacheLoader = cacheLoader;
+        this.serializationSupport = serializationSupport;
+        init();
+    }
+
+    private void init() {
         //CacheLoader has no interface so the cast is necessary to allow alternative PatternCacheLLoader implementations
         //although all implementations would need to extend CacheLoader
         //noinspection unchecked
@@ -110,4 +120,11 @@ public class DefaultPatternSource implements PatternSource<LoadingCache<PatternC
         cache.invalidateAll(keysToRemove);
         cache.cleanUp();
     }
+
+    private void readObject(ObjectInputStream in) {
+        serializationSupport.deserialize(this, in);
+        init();
+    }
+
+
 }
