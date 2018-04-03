@@ -25,6 +25,7 @@ import uk.q3c.krail.i18n.persist.PatternCacheLoader;
 import uk.q3c.krail.i18n.persist.PatternSource;
 import uk.q3c.util.guice.SerializationSupport;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -121,9 +122,11 @@ public class DefaultPatternSource implements PatternSource<LoadingCache<PatternC
         cache.cleanUp();
     }
 
-    private void readObject(ObjectInputStream in) {
-        serializationSupport.deserialize(this, in);
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        serializationSupport.injectTransientFields(this);
         init();
+        serializationSupport.checkForNullTransients();
     }
 
 

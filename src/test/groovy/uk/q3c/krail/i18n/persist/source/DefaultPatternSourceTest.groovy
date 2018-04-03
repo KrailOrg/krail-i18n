@@ -23,6 +23,7 @@ import uk.q3c.krail.i18n.persist.clazz.ClassPatternSource
 import uk.q3c.krail.i18n.test.DescriptionKey
 import uk.q3c.krail.i18n.test.TestLabelKey
 import uk.q3c.krail.option.Option
+import uk.q3c.util.guice.SerializationSupport
 
 /**
  * This test had to be changed to use a real DefaultPatternCacheLoader rather than a mock, although oddly the Mock did work originally
@@ -42,10 +43,11 @@ class DefaultPatternSourceTest extends Specification {
     def option = Mock(Option)
     def sourceProvider = Mock(PatternSourceProvider)
     def classPatternDao = Mock(ClassPatternDao)
+    SerializationSupport serializationSupport = Mock(SerializationSupport)
 
     def setup() {
         patternCacheLoader = new DefaultPatternCacheLoader(sourceProvider, option)
-        patternSource = new DefaultPatternSource(patternCacheLoader)
+        patternSource = new DefaultPatternSource(patternCacheLoader, serializationSupport)
     }
 
 
