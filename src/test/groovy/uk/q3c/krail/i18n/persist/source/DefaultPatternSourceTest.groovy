@@ -46,7 +46,7 @@ class DefaultPatternSourceTest extends Specification {
     SerializationSupport serializationSupport = Mock(SerializationSupport)
 
     def setup() {
-        patternCacheLoader = new DefaultPatternCacheLoader(sourceProvider, option)
+        patternCacheLoader = new DefaultPatternCacheLoader(sourceProvider, option, serializationSupport)
         patternSource = new DefaultPatternSource(patternCacheLoader, serializationSupport)
     }
 

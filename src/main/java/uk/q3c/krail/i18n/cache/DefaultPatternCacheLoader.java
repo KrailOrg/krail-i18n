@@ -28,7 +28,10 @@ import uk.q3c.krail.i18n.persist.source.DefaultPatternSourceProvider;
 import uk.q3c.krail.option.Option;
 import uk.q3c.krail.option.OptionContext;
 import uk.q3c.krail.option.OptionKey;
+import uk.q3c.util.guice.SerializationSupport;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Locale;
@@ -49,12 +52,14 @@ public class DefaultPatternCacheLoader extends CacheLoader<PatternCacheKey, Stri
     public static final OptionKey<String> optionKeyStubValue = new OptionKey<>("undefined", DefaultPatternSourceProvider.class, PatternLabelKey.Stub_Value,
             PatternDescriptionKey.Stub_Value);
     private Option option;
-    private PatternSourceProvider sourceProvider;
+    private SerializationSupport serializationSupport;
+    private transient PatternSourceProvider sourceProvider;
 
     @Inject
-    public DefaultPatternCacheLoader(PatternSourceProvider sourceProvider, Option option) {
+    public DefaultPatternCacheLoader(PatternSourceProvider sourceProvider, Option option, SerializationSupport serializationSupport) {
         this.sourceProvider = sourceProvider;
         this.option = option;
+        this.serializationSupport = serializationSupport;
     }
 
 
@@ -75,13 +80,12 @@ public class DefaultPatternCacheLoader extends CacheLoader<PatternCacheKey, Stri
      *
      * @param cacheKey the non-null key whose value should be loaded
      * @return the value associated with {@code key}; <b>must not be null</b>
-     * @throws Exception            if unable to load the result
      * @throws InterruptedException if this method is interrupted. {@code InterruptedException} is
      *                              treated like any other {@code Exception} in all respects except that, when it is caught,
      *                              the thread's interrupt status is set
      */
     @Override
-    public String load(PatternCacheKey cacheKey) throws Exception {
+    public String load(PatternCacheKey cacheKey) {
         checkNotNull(cacheKey);
 
         I18NKey i18NKey = cacheKey.getKey();
@@ -161,6 +165,11 @@ public class DefaultPatternCacheLoader extends CacheLoader<PatternCacheKey, Stri
     @Override
     public Option optionInstance() {
         return option;
+    }
+
+    private void readObject(ObjectInputStream inputStream) throws ClassNotFoundException, IOException {
+        inputStream.defaultReadObject();
+        serializationSupport.deserialize(this);
     }
 
 }
