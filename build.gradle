@@ -56,7 +56,7 @@ bintray {
 }
 
 dependencies {
-    compile 'uk.q3c.krail:krail-option-api:0.18.2.0'
+    compile 'uk.q3c.krail:krail-option-api:0.18.4.0'
     testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
     testCompile 'org.mockito:mockito-all:1.10.19'
 
